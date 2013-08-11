@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=default;at=content">
+			<head>
+				<style>
+					#makeMeDraggable {width:300px; height:300px; background: red; }
+				</style>
+				<link href="/css/eggplant/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+				<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+				<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+				<script type="text/javascript">
+					$(function() {
+						alert("jeez");
+						$('#makeMeDraggable').draggable();
+						$('#makeMeDraggable').resizable();
+						$('#dialog').dialog({
+							modal:true,
+							buttons: {
+								Ok: function() {$(this).dialog("close"); }
+							}
+						});
+					})
+				</script>
+			</head>
+
+      <h2>Test</h2>
+			<div class="lift:testSnippet">
+				<span id="username">uh</span>
+				<br/>
+				<span id="password">huh</span>
+				<br/>
+				<span id="resource_path">huh</span>
+				<span onclick="open('hey')">new window</span>
+				<a href="#" onclick="window.open('umm')">new window link</a><br/>
+				Run Mode: <span id="run_mode">run</span>
+				Current User: <span id="current_user">uh</span>
+				Current Session: <span id="current_session">da</span>
+				<ul id="students">
+					<li class="s_name">name</li>
+				</ul>
+			</div>
+			<div id="makeMeDraggable"</div>
+			<div id="dialog" title="submitted"> wongwongwong</div>
+
+    </div>
+  </body>
+</html>
+

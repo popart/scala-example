@@ -1,0 +1,20 @@
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </layout>
+  </appender>
+
+	<logger name="code.snippet" level="DEBUG"/>
+	<logger name="code.model" level="DEBUG"/>
+	<logger name="code.snippet" level="DEBUG"/>
+	<logger name="code.comet" level="DEBUG"/>
+	<logger name="code.lib" level="DEBUG"/>
+	<logger name="bootstrap.liftweb" level="INFO"/>
+
+  <root level="WARN">		
+    <appender-ref ref="STDOUT" />
+  </root>  
+  
+</configuration>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <title>Display</title>
+  </head>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=plain;at=content" style="font-size:220%">
+		<head>
+			<link href="/css/eggplant/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+			<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+			<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+			<script type="text/javascript">
+				function addUI() {
+					$('.r_txtbox').draggable();
+					$('.r_txtbox').resizable();
+					$('.r_txtbox').show();
+				}
+			</script>
+		</head>
+
+
+			<div style="padding:100px; text-align:center" class="lift:comet?type=questionDisplay;metaname=s">
+	  		<span id="question_text">Question goes here</span><br/>
+				<img id="question_img" src="" />
+			</div>
+			
+			<div class="lift:comet?type=timerListener;metaname=s">
+				<center>
+				<span id="timer" style="color:red; padding:2px; display:none">Time</span>
+				</center>
+			</div>
+			
+			<div class="lift:comet?type=DisplayListener;metaname=s">
+				<div id="display_anchor">
+					<div class="r_txtbox span-8" style="border:1px solid; background:pink; display:none">
+						<span class="txt">student_answer</span><br/>
+						<button class="close_btn">close</button>
+					</div>
+				</div>
+			</div>
+
+    </div>
+  </body>
+</html>
+

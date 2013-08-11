@@ -1,0 +1,7 @@
+admin.username=admin@blt.com
+admin.password=fabercastell
+
+db.driver=com.mysql.jdbc.Driver
+db.url=jdbc:mysql://seedingproject.com:3306/seed_dev
+db.user=seed_app
+db.password=Seed01?

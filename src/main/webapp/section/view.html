@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=default;at=content">
+			<head>
+				<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+				<title>Home</title>
+			</head>
+  
+<!--
+			<div class="lift:sectionView">
+      	<h2>Class: <span id="sTitle"/></h2>
+			</div>
+-->
+			<div class="lift:sectionView.startSession"><!--?form=post">-->
+				<table>
+				<tr>
+					<td><h2>Class: <span id="sTitle"/></h2></td>
+					<td><button id="session_start">Start</button></td>
+				</tr>
+				</table>
+			</div>
+			
+			<table>
+				<thead>
+					<tr>
+						<th colspan="6" style="background-color:#3364AD">Students</th>
+					<tr>
+					<tr>
+						<th>Last Name</th>
+						<th>First Name</th>
+						<th>User ID</th>
+						<th>Password</th>
+						<th>History</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody class="lift:sectionView.lsStudents"><!--?form=post">-->
+					<tr> 
+						<td id="newStudentForm"></td>
+					</tr>
+					<tr class="student">
+						<td class="rowForm">iono</td>
+					</tr>
+				</tbody>
+			</table>
+
+    </div>
+  </body>
+</html>
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=default;at=content">
+			<head>
+				<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+				<title>Home</title>
+				<link href="/css/eggplant/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+				<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+				<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+				<script type="text/javascript">
+					$(function() {
+						$('#startDate input').datepicker();
+						$('#endDate input').datepicker();
+					});
+				</script>
+			</head>
+			
+      <h2>Response Search</h2>
+			<div class="lift:responseIndex.search?form=post">
+				Date: <span id="startDate"></span> to <span id="endDate"></span><br/>
+				Class: <select id="classSelect">Class</select>&nbsp;Student: <select id="studentSelect">Student</select><br/>
+				Question (contains): <span id="questionText"></span><br/>
+				<input type="sumbit" id="search_submit" />
+			</div>
+			<br/>
+
+			<table>
+				<thead>
+					<tr>
+						<th>Student</th>
+						<th>Response</th>
+						<th>Question</th>
+						<th>Date</th>
+					</tr>
+				</thead>
+				<tbody class="lift:responseIndex.list" name="">
+					<tr class="response">
+						<td class="rStudent"></td>
+						<td class="rText"></td>
+						<td class="qId"></td>
+						<td class="rDate"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="lift:responseIndex.paginate">
+				<nav:records></nav:records><br/>
+				<nav:first></nav:first> <nav:prev></nav:prev> <nav:allpages> | </nav:allpages> <nav:next></nav:next> <nav:last></nav:last>
+			</div>
+
+    </div>
+  </body>
+</html>
+

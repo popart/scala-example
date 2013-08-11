@@ -1,0 +1,7 @@
+admin.username=admin@blt.com
+admin.password=fabercastell
+
+db.driver=com.mysql.jdbc.Driver
+db.url=jdbc:mysql://seedingproject.com:3306/bltek11_seeding
+db.user=bltek11_db
+db.password=galeriacapistrano

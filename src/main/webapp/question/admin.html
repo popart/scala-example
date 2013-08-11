@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=plain;at=content">
+			<head>
+				<link href="/css/eggplant/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+				<link href="/css/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" type="text/css" />
+				<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+				<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+				<script type="text/javascript" src="/js/jquery.fancybox-1.3.4.pack.js"></script>
+				<script type="text/javascript" src="/js/jquery.easing-1.3.pack.js"></script>
+				<script type="text/javascript">
+				$(function() {
+					addFancyBox();
+				})
+				//the lightbox for showing student responses
+				//this method gets called with comet updates
+				function addFancyBox() {
+					$(".myFancyBoxLink").fancybox({
+						'hideOnContentClick': false
+					});
+				}
+				</script>
+  		</head>
+
+			<form class="lift:form.ajax">
+				<div class="lift:stopQuestion" style="margin:20px 0px">
+					<button id="stop_btn">Stop</button>
+					<button onclick="window.location.href='/question/create_pop'">
+						Pop Question
+					</button>
+				</div>
+			</form>
+				
+
+			<div class="lift:questionAdmin">
+				<div style="background-color:#C3D9FF; padding: 1em 1em .1em"><h1><span id="result">q</span></h1></div>
+				<img id="q_img" />
+			</div>
+
+			<br/>
+
+			<div><a href="javascript:;" onclick="$('#response_cloud').toggle('show')">Word Bank</a></div>
+			<div class="lift:comet?type=responseCloudListener;metaname=s" id="response_cloud" style="border:dashed; display:none; height:15em;">
+			</div>
+
+			<!--
+			<div class="lift:comet?type=timerListener;metaname=s" >
+				<h3><span id="timer" style="color:red; display:none">timer</span></h3>
+			</div>
+			<div class="lift:questionTimer?form=post">
+				<input id="options" />
+				<button id="set_timer">time</button>
+				<button id="add_thirty">time</button>
+				<button id="subtract_thirty">time</button>
+				<button id="stop_timer">time</button>
+			</div>
+			-->
+			<form class="lift:form.ajax">
+				<div class="lift:comet?type=responseListener;metaname=s">
+					<div class="large"></div>
+					<table>
+					<thead><tr>
+						<th colspan="3">Responses Received:&nbsp;<span id="submitted_count">?</span>/<span id="total_count">?</span></th>
+					</tr></thead>
+					<tbody id="responses_received">
+						<tr class="student">
+							<td width="10%"><span class="response_num"></span></td>
+							<td><span class="response_txt"></span>
+									<div style="display:none"><div class="myFancyBox" id=""></div></div></td>
+							<!--<td width="20%"><button class="display_btn"></button></td>-->
+							<td width="20%"><a href="" class="myFancyBoxLink">Show</a></td>
+						</tr>
+					</tbody>	
+				</div>
+			</form>
+
+  </body>
+</html>
+

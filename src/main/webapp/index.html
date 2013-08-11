@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=student-default;at=content">
+			<head>
+				<script type="text/javascript">
+					var js_submitted_txt;
+					var student_id;
+					function checkChanges(text) {
+						if(js_submitted_txt == text) {
+							$('#edited_msg').hide(); 
+						} else {
+							$('#edited_msg').show();
+						}
+					}
+					/*Submit form on 'enter' or partial update on 'space' and punctuation */
+					function checkEnter(e, text) {
+						var key = e.which || window.event.keyCode;
+						if(key == 13) { //enter key
+							if($('#response_area').val().match(/\w/) != null) {
+								$('#response_form').submit();
+							}
+						} 
+						if (key == 13 || key == 32 || //enter, space
+								key == 190 || key == 46 || //period, period
+								key == 188 || key == 44) { //comma, comma
+							//liveUpdate goes to JsonQuestionHandler
+							liveUpdate(new Array(student_id, text));
+						}
+					}
+				</script>
+  		</head>
+			
+			<span class="lift:JsonQuestion">THE JSON HANDLER</span>
+<!--
+			<div class="lift:comet?type=timerListener;metaname=s" >
+				<h3><span id="timer" style="color:red; border: 1px solid red: padding: 2px; display:none">timer</span></h3>
+			</div>
+-->
+		
+			<div class="lift:questionResponse">
+				<div style="font-size: 2em" id="test_q"></div>
+				<div id="q_img"></div>
+
+				<form class="lift:form.ajax">
+					<div id="response_form"></div>
+				</form>
+
+				<div id="edit_form" style="display:none">
+					<span style="color:green">Response has been submitted!</span><br/>
+					<span id="submitted_txt"></span><br/><br/>
+					<button onclick="$('#edit_form').hide(); $('#response_form').show();">Edit</button> &nbsp;
+				</div>
+			</div>
+
+			<div class="lift:comet?type=questionListener;metaname=s" style="display:none">
+			</div>
+
+    </div>
+  </body>
+</html>
+

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <title>Home</title>
+  </head>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=default;at=content">
+
+			<div class="lift:lessonView">
+      	<h2>Lesson: <span id="result"/></h2>
+			</div>
+
+			<table>
+				<thead>
+					<tr>
+						<th>Question</th>
+						<th>Folder</th>
+						<th>Version</th>
+						<th>Customize</th>
+						<th>Delete</th>
+					</tr>
+				</thead>
+				<tbody class="lift:lessonView.qList">
+					<tr class="question">
+						<td><a href="" class="qText">question</a></td>
+						<td><span class="qFolder"/></td>
+						<td><span class="qVersion"/></td>
+						<td><a href="" class="qCustomize">Customize</a></td>
+						<td><button class="qDelete"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="lift:lessonView.qCreate?form=post">
+				<input id="createQ_text" />
+				<input type="submit" id="createQ_submit" />
+			</div>
+
+			<form class="lift:lessonView.folderQs">
+				<table>
+				<tr><td><select id="folder_sel">select</select>  <b>Folders</b></td></tr>
+				<tr><td><select id="folder_qs">select</select></td></tr>
+				<tr><td><input id="folder_submit" /></td></tr>
+				</table>
+			</form>
+
+    </div>
+  </body>
+</html>
+

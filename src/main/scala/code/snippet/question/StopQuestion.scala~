@@ -1,0 +1,45 @@
+package code 
+package snippet 
+
+import net.liftweb.mapper.{By, NotNullRef}
+import scala.xml.{NodeSeq, Text}
+import net.liftweb.util._
+import net.liftweb.common._
+import java.util.Date
+import code.lib._
+import Helpers._
+import code.model.{Session, Folder, Question, User, Click}
+import net.liftweb.http._
+import net.liftweb.sitemap._
+import js._
+import JsCmds._
+import js.JE.JsRaw
+import code.comet.{QuestionServer, ResponseServer, ResponseServerUpdate, AskQ, DisplayServer, DisplayServerUpdate, StopTime}
+
+
+class StopQuestion extends Loggable{
+	def render = {
+		def stopQuestion(): JsCmd = {
+			/*
+			if(!User.getSession.isDefined){
+				Click.click("Question Admin", "STOP_QUESTION", "FAIL")
+				logger.info("[ERROR] Stopping a question but no class in session")
+				S.error("No class in session")
+			}
+			else {
+				Session.getQuestionServer(User.getSessionId).map(_ ! AskQ("", Empty, -1, false))
+				Session.getResponseServer(User.getSessionId).map(_ ! ResponseServerUpdate(Nil))
+				Session.getDisplayServer(User.getSessionId).map(_ ! DisplayServerUpdate(Nil))
+				Session.getTimerServer(User.getSessionId).map(_ ! StopTime)
+				Session.getWordCountServer(User.getSessionId).map(_ ! Refresh)
+				logger.info("Question has been stopped, Session:"+(User.getSessionId openOr "no user session"))
+				Click.click("Question Admin", "STOP_QUESTION", "")
+			}
+				*/
+			if(Question.stop()) Click.click("Question Admin", "STOP_QUESTION", "")
+			else Click.click("Question Admin", "STOP_QUESTION", "FAIL")
+			Run("self.close()")
+		}
+		"#stop_btn" #> SHtml.ajaxSubmit("Close Question", stopQuestion)
+	}
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+    <title>Home</title>
+  </head>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=default;at=content">
+			<head>
+				<link href="/scripts/star-rating/jquery.rating.css" rel="stylesheet" type="text/css" />
+				<link href="/css/eggplant/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+				<link href="/css/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" type="text/css" />
+				<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+				<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+				<script type="text/javascript" src="/js/jquery.fancybox-1.3.4.pack.js"></script>
+				<script type="text/javascript" src="/js/jquery.easing-1.3.pack.js"></script>
+				<script type="text/javascript" src="/scripts/star-rating/jquery.rating.pack.js"></script>
+				<script type="text/javascript">
+					$(function() {
+						addSlides();
+						addFancyBox();
+					});
+
+					var show = true;
+					function toggleNames() {
+						/*
+						if(show) $('.student_name').show();
+						else $('.student_name').hide();
+						show = !show;
+						*/
+						$('.student_name').toggle("show");
+					}
+
+					function addSlides() {
+						var foldMap = {};
+						var studentName;
+						var responseArray;
+						$('.response').map(function() {
+							//todo: breaks if there is an empty table (question no responses)
+							studentName = this.cells[0].firstChild.firstChild.innerHTML+this.cells[0].getAttribute('qid');
+							responseArray = foldMap[studentName];
+							if(responseArray == null) {
+								responseArray = [];
+								foldMap[studentName] = responseArray;
+							}
+							//responseArray.push($(this));
+							responseArray.push(this);
+						});
+						for(key in foldMap) {
+							//ok so apparently reverse actually changes the array
+							for(row in foldMap[key].reverse().slice(1)){
+								$(foldMap[key][row]).attr("name", key+"_old");
+							}
+							$(foldMap[key].reverse()[0].cells[1]).click((function(name) { 
+								//this is retarded, look up "js closures in for-loops"
+								return function() { 
+									$('[name="'+name+'"]').toggle("show");
+								}
+							})(key+"_old"));
+							$(foldMap[key][0].cells[1]).css("cursor", "pointer");
+						};
+						
+						$('[name*=_old]').hide();
+						$('[name*=_old]').children().css('background-color', '#CFCFCF');
+					}	
+					function addFancyBox() {
+						$('.myFancyBoxLink').fancybox({
+							'hideOnContentClick': false
+						});
+					}
+				</script>
+			</head>
+			<div class="lift:sessionView">
+
+      <h2>Session History - <span id="session_title">untitled</span></h2>
+			
+			<div class="large">
+				Class: <span id="class_name">title</span>, Date: <span id="session_date">date</span><br/>
+				<button onclick="toggleNames()">Show/Hide names</button>
+			</div>
+			<table class="question">
+				<thead>
+					<tr>
+						<th class="result" colspan="3">Question Texts</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="response">
+						<td class="response_td" qid=""><span class="student_name" style="display:none">name</span></td>
+						<td><span class="r_text">text</span>
+								<div style="display:none"><span class="myFancyBox">text</span></div>
+						</td>
+						<td><a href="" class="myFancyBoxLink">Show</a></td>
+						<!--<td class="grade_form">who knows</td>-->
+					</tr>
+				</tbody>
+			</table>
+
+    </div>
+  </body>
+</html>
+

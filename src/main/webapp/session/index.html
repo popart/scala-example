@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=default;at=content">
+			<head>
+				<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+				<title>Home</title>
+				<link href="/css/eggplant/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css" />
+				<script type="text/javascript" src="/js/jquery-1.6.2.min.js"></script>
+				<script type="text/javascript" src="/js/jquery-ui-1.8.16.custom.min.js"></script>
+				<script type="text/javascript">
+					$(function() {
+						$('#startDate input').datepicker();
+						$('#endDate input').datepicker();
+					});
+				</script>
+			</head>
+
+      <h2>Session Histories</h2>
+			<div class="lift:sessionIndex.search?form=post">
+				Title: <input id="search_box" /><br/>
+				Date: <span id="startDate"></span> to <span id="endDate"></span><br/>
+				Section: <select id="classSelect">Class</select><br/>
+				<input type="sumbit" id="search_submit" />
+			</div>
+			<br/>
+
+			<table>
+				<thead>
+					<tr>
+						<!--<th class="lift:sessionindex.paginate"><sort:title>title</sort:title></th>-->
+						<th>Title</th>
+						<th>Section</th>
+						<th>Date</th>
+					</tr>
+				</thead>
+				<tbody class="lift:sessionIndex.list">
+					<tr class="session">
+						<td><a href="" class="fTitle">folder</a></td>
+						<td class="fSection"></td>
+						<td class="fDate"></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="lift:sessionIndex.paginate">
+				<nav:records></nav:records><br/>
+				<nav:first></nav:first> <nav:prev></nav:prev> <nav:allpages> | </nav:allpages> <nav:next></nav:next> <nav:last></nav:last>
+			</div>
+    </div>
+  </body>
+</html>
+

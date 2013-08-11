@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <body class="lift:content_id=main">
+    <div id="main" class="lift:surround?with=plain;at=content">
+			<head>
+				<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+				<title>Home</title>
+				<script type="text/javascript">
+					var showEdit = true
+					function toggleEdit() {
+						if(showEdit) $('#edit_form').show();
+						else $('#edit_form').hide();
+						showEdit = !showEdit
+					} 
+				</script>
+			</head>
+
+			<div class="lift:questionView.ask?form=post">
+				<table>
+					<tr>
+      			<td width="200px"><h2>Question Detail</h2></td>
+						<td><button id="ask_btn">iono</button>
+								<button onclick="window.close()">Close</button></td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="lift:questionView">
+				<span id="result" class="large">q</span><br/>
+				<div><img id="q_img" src="" /></div>
+			</div>
+			
+			<hr/>
+			<div class="lift:questionView.admin"><div id="admin">
+			<button onclick="toggleEdit()">Edit</button>
+			<div id="edit_form" style="display:none">
+
+				<form class="lift:questionView.edit" >
+					<input id="edit_field" /><br/>
+					<button id="edit_submit">iono</button>
+				</form>
+
+				<br/>
+
+				<div class="lift:questionImage.upload?form=post;multipart=true">
+					<div id="img_upload">yup</div>
+					<div id="img_submit">sub</div>
+					<div id="img_delete">sub</div>
+				</div>
+			</div>
+			<br/>
+			<div class="lift:questionView">
+				<b>Folder:</b> <span id="folder">f</span>
+			</div>
+			<div class="lift:questionView.move?form=post">
+				<select id="folder_sel">Folder</select>
+				<button id="move_submit">Move</button>
+			</div>
+			</div>
+
+			<div class="lift:questionView.history">
+			<b>History</b>
+			<ol>
+				<li class="history">prev</li>
+			</ol>
+			</div></div>
+
+  </body>
+</html>
+

@@ -1,0 +1,216 @@
+package bootstrap.liftweb
+
+import net.liftweb._
+import util._
+import Helpers._
+
+import common._
+import http._
+import sitemap._
+import Loc._
+import mapper._
+import actor._
+
+import code.model._
+import code.lib.MySessionInfo
+import code.snippet._
+import code.comet._
+import widgets.tree.TreeView
+import widgets.logchanger._
+
+/**
+ * A class that's instantiated early and run.  It allows the application
+ * to modify lift's environment
+ */
+class Boot extends Loggable {
+  def boot {
+		DefaultConnectionIdentifier.jndiName = "jdbc/seed"
+    if (!DB.jndiJdbcConnAvailable_?) {
+      val vendor = new StandardDBVendor(
+				Props.get("db.driver") openOr "org.h2.Driver",
+			  Props.get("db.url") openOr "jdbc:h2:lift_proto.db;AUTO_SERVER=TRUE",
+			  Props.get("db.user"), Props.get("db.password")
+			)
+      LiftRules.unloadHooks.append(vendor.closeAllConnections_! _)
+      DB.defineConnectionManager(DefaultConnectionIdentifier, vendor)
+    }
+
+    // Use Lift's Mapper ORM to populate the database
+    // you don't need to use Mapper to use Lift... use
+    // any ORM you want
+    Schemifier.schemify(true, Schemifier.infoF _, User, Section, Student, Folder, Question, Response, SessionQuestions, Session, ImageBlob, ImageInfo, Click)
+    // where to search snippet
+    LiftRules.addToPackages("code")
+		LiftRules.snippetDispatch.append(Map("runtime_stats" -> RuntimeStats))
+		
+		// widgets
+		TreeView.init
+		LogLevelChanger.init
+		object logLevel extends LogLevelChanger with LogbackLoggingBackend {
+			override def menuLocParams: List[Loc.AnyLocParam] = List(User.testSuperUser)
+		}
+
+		//session timeout logging
+		LiftSession.onShutdownSession = MySessionInfo.destroyed _ :: LiftSession.onShutdownSession
+		LiftSession.afterSessionCreate = MySessionInfo.created _ :: LiftSession.afterSessionCreate
+		LiftSession.onBeginServicing = MySessionInfo.doBeginService _ :: LiftSession.onBeginServicing
+		User.onLogIn = MySessionInfo.login _ :: User.onLogIn
+		
+		/*
+		LiftSession.onSessionActivate = List(
+			(l: LiftSession) => logger.info("Starting LiftSession:"+l.uniqueId)
+			)
+		LiftSession.onAboutToShutdownSession = List(
+			(l: LiftSession) => logger.info("Shutting down LiftSession:"+l.uniqueId)
+			)
+		*/
+		//default superadmin user
+		val adminUsername = Props.get("admin.username") openOr "admin@blt.com"
+		val adminPassword = Props.get("admin.password") openOr "fabercastell"
+		if(User.find(By(User.email, adminUsername)).isEmpty && adminUsername != "") {
+			val u = User.create.email(adminUsername).password(adminPassword).superUser(true).saveMe
+			User.validateUser(u.email.is.toString) //kinda roundabout i know
+		}
+		def userOnly = If(() => User.loggedIn_?,"Teachers only")
+		def studentOnly = If(() => Student.loggedIn_?, () => RedirectResponse({
+			if(User.loggedIn_?) "/section/index" 
+			else "/student/login"
+		}))
+
+    // Build SiteMap
+    def sitemap = SiteMap(
+      Menu.i("Current Question") / "index" >>  LocGroup("main") >> studentOnly,
+			//Menu.i("Journal") / "student" / "journal" >> If(() => Student.loggedIn_?, () => RedirectResponse("/student/login")) >> LocGroup("main"),
+
+			//User.loginMenuLoc.open_!,
+			Menu.i("Display") / "question" / "display"
+				>> userOnly 
+				>> If(() => Session.getQuestionServer(User.getSessionId).isDefined, "No Question") 
+				>> LocGroup("main")
+				>> QueryParameters(() => List(("s", (User.getSessionId.map(_.toString) openOr "0")))),
+			Menu.i("Student Login") / "student" / "login" >> If(() => !Student.loggedIn_? && !User.loggedIn_?, "Already logged in") >> LocGroup("main"),
+			Menu.i("Student Logout") / "student" / "logout" >> studentOnly,
+			Menu.i("Admin Question") / "question" / "admin" >> userOnly 
+				>> MenuCssClass("pop_window")
+				>> If(() => Session.getQuestionServer(User.getSessionId).map(_.isRunning_?) getOrElse false, "No Question") 
+				>> If(() => User.getSession.isDefined, "No class in session") >> LocGroup("main")
+				>> QueryParameters(() => List(("s", (User.getSessionId.map(_.toString) openOr "0")))),
+			Menu.i("Class in Session") / "session" / "running" 
+				>> If(() => User.loggedIn_? && User.getSession.isDefined, "No class in session") >> LocGroup("main")
+				>> QueryParameters(() => List(("s", (User.getSessionId.map(_.toString) openOr "0")))),
+			Menu.i("Classes") / "section" / "index" >> userOnly >> LocGroup("main"),
+			Menu.i("Create/Edit Questions") / "folder" / "index" >> userOnly >> LocGroup("main"),
+			Menu.i("View Question Tree") / "folder" / "tree" >> userOnly >> LocGroup("main"),
+			Menu.i("View Shared Questions") / "folder" / "sharedTree" >> userOnly >> LocGroup("main"),
+			Menu.i("Session Histories") / "session" / "index" >> userOnly >> LocGroup("main"), 
+			Menu.i("Response Search") / "response" / "index" >> userOnly 
+				>> LocGroup("main"), 
+			Menu.i("User Menus") / "user_mens" >> User.AddUserMenusHere,
+			//Menu.i("Test") / "test" / "index" >> LocGroup("user"),
+			logLevel.menu,
+			FolderViewParam.menu >> userOnly >> Hidden,
+			FolderDelParam.menu >> userOnly >> Hidden,
+			SectionViewParam.menu >> userOnly >> Hidden,
+			QuestionViewParam.menu >> userOnly >> Hidden,
+			SessionViewParam.menu >> userOnly >> Hidden,
+			StudentHistoryParam.menu >> userOnly >> Hidden,
+			Menu.i("question_del") / "question" / "delete" >> Hidden >> userOnly,
+			Menu.i("lesson_del") / "lesson" / "delete" >> Hidden >> userOnly,
+			Menu.i("question_customize") / "question" / "customize" >> Hidden >> userOnly,
+			Menu.i("student_del") / "student" / "delete" >> Hidden >> userOnly,
+			Menu.i("section_del") / "section" / "delete" >> Hidden >> userOnly
+		)
+      // more complex because this menu allows anything in the
+      // /static path to be visible
+/*      Menu(Loc("Static", Link(List("static"), true, "/static/index"), 
+	       "Static Content"))) */
+
+    def sitemapMutators = User.sitemapMutator
+	
+		// set the sitemap.  Note if you don't want access control for
+    // each page, just comment this line out.
+    LiftRules.setSiteMapFunc(() => sitemapMutators(sitemap))
+
+		//Image Dispatch
+		LiftRules.statelessDispatchTable.append(ImageInfo.serveImage)
+
+    // Use jQuery 1.4
+    LiftRules.jsArtifacts = net.liftweb.http.js.jquery.JQuery14Artifacts
+
+    //Show the spinny image when an Ajax call starts
+    LiftRules.ajaxStart =
+      Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
+    
+    // Make the spinny image go away when it ends
+    LiftRules.ajaxEnd =
+      Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
+
+    // Force the request to be UTF-8
+    LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
+
+		// What is the function to test if a user is logged in?
+    LiftRules.loggedInTest = Full(() => User.loggedIn_?)
+
+    // Use HTML5 for rendering
+    LiftRules.htmlProperties.default.set((r: Req) =>
+      new Html5Properties(r.userAgent))    
+
+    // Make a transaction span the whole HTTP request
+    S.addAround(DB.buildLoanWrapper)
+
+		// Dump information about session every 10 minutes
+    SessionMaster.sessionWatchers = SessionInfoDumper :: SessionMaster.sessionWatchers
+  }
+}
+
+object SessionInfoDumper extends LiftActor with Loggable {
+  private var lastTime = millis
+
+  private def cyclePeriod = 5 minute
+
+  import code.lib.SessionChecker
+
+  protected def messageHandler = {
+      case SessionWatcherInfo(sessions) =>
+        if ((millis - cyclePeriod) > lastTime) {
+          lastTime = millis
+          val rt = Runtime.getRuntime
+          rt.gc
+
+          RuntimeStats.lastUpdate = timeNow
+          RuntimeStats.totalMem = rt.totalMemory
+          RuntimeStats.freeMem = rt.freeMemory
+          RuntimeStats.sessions = sessions.size
+
+          val percent = (RuntimeStats.freeMem * 100L) / RuntimeStats.totalMem
+
+          // get more aggressive about purging if we're
+          // at less than 35% free memory
+          if (percent < 35L) {
+            SessionChecker.killWhen /= 2L
+if (SessionChecker.killWhen < 5000L)
+SessionChecker.killWhen = 5000L
+            SessionChecker.killCnt *= 2
+          } else {
+            SessionChecker.killWhen *= 2L
+if (SessionChecker.killWhen >
+                SessionChecker.defaultKillWhen)
+SessionChecker.killWhen = SessionChecker.defaultKillWhen
+            val newKillCnt = SessionChecker.killCnt / 2
+if (newKillCnt > 0) SessionChecker.killCnt = newKillCnt
+          }
+
+          val dateStr: String = timeNow.toString
+          logger.info("[MEMDEBUG] At " + dateStr + " Number of open sessions: " + sessions.size)
+          logger.info("[MEMDEBUG] Free/total Memory: " + pretty(RuntimeStats.freeMem) + " / " + pretty(RuntimeStats.totalMem))
+          //logger.info("[MEMDEBUG] Kill Interval: " + (SessionChecker.killWhen / 1000L))
+          //logger.info("[MEMDEBUG] Kill Count: " + (SessionChecker.killCnt))
+        }
+    }
+  private def pretty(in: Long): String = {
+    if (in > 1000L) pretty(in / 1000L) + "," + (in % 1000L)
+    else in.toString
+	}
+}
+
+
