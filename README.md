@@ -1,6 +1,6 @@
-scala-lift-example
+we-board
 ==================
 
-Source code from an application that facilitated classwide discussions between students and a teacher.
+Web application to facilitate classwide discussions between students and a teacher.
 
 Dependencies and other build-code not included.
